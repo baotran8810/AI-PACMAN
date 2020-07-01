@@ -14,6 +14,7 @@ n = Directions.NORTH
 s = Directions.SOUTH
 e = Directions.EAST
 w = Directions.WEST
+p = Directions.STOP
 
 
 class SearchProblem:
@@ -146,36 +147,6 @@ def nullHeuristic(state, problem=None):
     goal in the provided SearchProblem.  This heuristic is trivial.
     """
     return 0
-def compute_actions(path, goal):
-    if not path:
-        return [Directions.STOP]
-    actions = []
-    i = goal
-    actions.insert(0, goal[1])
-    while path[i][1] != Directions.STOP:
-        actions.insert(0, path[i][1])
-        i = path[i]
-    return actions
-def change_Drection(path, drection):
-    if not path:
-        return [Directions.STOP]
-    actions = []
-    i = drection
-    actions.insert(0, drection[1])
-    while path[i][1] != Directions.STOP:
-        actions.insert(1, Directions.REVERSE)
-        i = path[i]
-    return actions
-def change_Drection1(path, drection):
-    if not path:
-        return [Directions.STOP]
-    actions = []
-    i = drection
-    actions.insert(0, drection[1])
-    while path[i][1] != Directions.STOP:
-        actions.insert(0, Directions.STOP)
-        i = path[i]
-    return actions
 
 def aStarSearch(problem, heuristic):
     expand_node = []
@@ -189,11 +160,9 @@ def aStarSearch(problem, heuristic):
         expand_node.append(current)
         cost = cost + current[2]
         if heuristic(current, problem) == 0:
-            return compute_actions(path, current)
-        if problem._expanded == 2 and detecFront(problem.ghostPositions, current):
-            return change_Drection(path, current)
-        if problem._expanded == 1 and detecFront(problem.ghostPositions, current):
-            return change_Drection(path, current)
+            return getDirections(expand_node[0],path, expand_node)
+        if problem._expanded > 0 and problem._expanded < 2  and detecFront(problem.ghostPositions, current):
+            return getDirections(expand_node[0],path, expand_node)
         successors = problem.getSuccessors(current[0])
         for state in successors:
             if state not in expand_node and state not in frontier.heap:
@@ -222,67 +191,20 @@ def requireEvasiveManeuver(nextState, ghostPositions):
                 dangerZone.append((x - i, y - i))
                 dangerZone.append((x, y - i))
                 dangerZone.append((x + i, y - i))
-
-
-
-
-
+    dangerZone.append((x-2, y-2))
+    dangerZone.append((x-2, y+2))
+    dangerZone.append((x+2, y-2))
+    dangerZone.append((x+2, y-2))
     return nextState[0][0] in dangerZone
     pass
 
-def requireEvasiveManeuver1(nextState, ghostPositions):
-    dangerZone = []
-    for pos in ghostPositions:
-        x = pos[0]
-        y = pos[1]
-        dangerZone.append((x, y))
-        for i in range(1, 2):
-            dangerZone.append((x - i, y + i))
-            dangerZone.append((x, y + i))
-            dangerZone.append((x + i, y + i))
-            dangerZone.append((x - i, y))
-            dangerZone.append((x + i, y))
-            dangerZone.append((x - i, y - i))
-            dangerZone.append((x, y - i))
-            dangerZone.append((x + i, y - i))
 
-    return nextState[0][0] in dangerZone
-    pass
+
 
 def detecFront(ghostPositions, current):
     dangerZone = []
     x = current[0][0][0]
     y = current[0][0][1]
-    print(x)
-    for i in range(1, 3):
-        if(current[1] == "West"):
-            dangerZone.append((x - i, y + i))
-            dangerZone.append((x - i, y))
-            dangerZone.append((x - i, y - i))
-        if (current[1] == "East"):
-            dangerZone.append((x + i, y + i))
-            dangerZone.append((x + i, y))
-            dangerZone.append((x + i, y - i))
-        if (current[1] == "South"):
-            dangerZone.append((x - i, y - i))
-            dangerZone.append((x, y - i))
-            dangerZone.append((x + i, y - i))
-        if (current[1] == "North"):
-            dangerZone.append((x - i, y + i))
-            dangerZone.append((x, y + i))
-            dangerZone.append((x + i, y + i))
-
-    for ghost in ghostPositions:
-        if ghost in dangerZone:
-            return True
-
-    return False
-
-def detecFront(ghostPositions, current):
-    dangerZone = []
-    x = current[0][0][0]
-    y = current[0][0][1]
-    print(x)
     for i in range(1, 2):
         if(current[1] == "West"):
             dangerZone.append((x - i, y + i))

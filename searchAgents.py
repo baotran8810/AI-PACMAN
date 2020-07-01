@@ -99,8 +99,7 @@ class FoodSearchProblem:
             for y in range(0, self.start[1].height):
                 if self.start[1].data[x][y]:
                     self.food_Location.append((x, y))
-        print(self.food_Location)
-        print(self.start[1].width)
+
 
 
 
@@ -167,16 +166,14 @@ def foodHeuristic(state, problem):
     # TODO
     gh = manhattanDistance(problem.food_Location[0], problem.ghostPositions[0])
     fh = manhattanDistance(state[0][0], problem.food_Location[0])
-    if len(problem.food_Location) == 1 :
-        temp = 1000;
-    else: temp = 0
+
     for foodLoca in problem.food_Location:
         s =0
         s = manhattanDistance(foodLoca, problem.ghostPositions[0])
         for ghostLoca in problem.ghostPositions:
             s = min(s,manhattanDistance(foodLoca, ghostLoca))
         if(s != 0):
-            fh = min(fh, manhattanDistance(state[0][0], foodLoca)+1/10*s + temp)
+            fh = min(fh, manhattanDistance(state[0][0], foodLoca)+((1/s)**2))
         else:
             fh = min(fh, manhattanDistance(state[0][0], foodLoca))
     return fh
