@@ -151,6 +151,10 @@ class UCSFoodSearchAgent(SearchAgent):
     def __init__(self, fn='uniformCostSearch', prob='FoodSearchProblem', heuristic='nullHeuristic'):
         SearchAgent.__init__(self, fn, prob, heuristic)
 
+    def getAction(self, state):
+        self.registerInitialState(state)
+        return self.actions[0]
+
 
 class AStarFoodSearchAgent(SearchAgent):
     def __init__(self, fn='aStarSearch', prob='FoodSearchProblem', heuristic='foodHeuristic'):
@@ -171,7 +175,7 @@ def foodHeuristic(state, problem):
         s =0
         s = manhattanDistance(foodLoca, problem.ghostPositions[0])
         for ghostLoca in problem.ghostPositions:
-            s = min(s,manhattanDistance(foodLoca, ghostLoca))
+            s = min(s,manhattanDistance(foodLoca, ghostLoca)) #manhattanDistance from food to closest ghost
         if(s != 0):
             fh = min(fh, manhattanDistance(state[0][0], foodLoca)+((1/s)**2))
         else:

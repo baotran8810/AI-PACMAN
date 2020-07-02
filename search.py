@@ -150,12 +150,12 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic):
     expand_node = []
-    path = defaultdict(list)
+    path = defaultdict(list) # for saving which state precedes which states
     frontier = PriorityQueue()
-    cost = 0
+    cost = 0 #cost each new action
     start = (problem.getStartState(), Directions.STOP, 0)
     frontier.push(start, heuristic(start, problem) + cost)
-    while not frontier.isEmpty():
+    while not frontier.isEmpty(): #do A*
         current = frontier.pop()
         expand_node.append(current)
         cost = cost + current[2]
